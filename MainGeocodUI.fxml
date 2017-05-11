@@ -2,18 +2,31 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.102" xmlns:fx="http://javafx.com/fxml/1" fx:controller="MainGeocod.MainController">
    <children>
-      <Button fx:id="start_button" layoutX="127.0" layoutY="343.0" mnemonicParsing="false" onAction="#start_process" text="Start" />
+      <Button fx:id="start_button" layoutX="127.0" layoutY="343.0" mnemonicParsing="false" onAction="#start_process" prefHeight="31.0" prefWidth="81.0" text="Start" />
       <Label fx:id="customer" layoutX="231.0" layoutY="160.0" prefHeight="21.0" prefWidth="290.0" />
       <Label layoutX="127.0" layoutY="160.0" prefHeight="21.0" prefWidth="81.0" text="Name" />
       <Label fx:id="address" layoutX="231.0" layoutY="194.0" prefHeight="21.0" prefWidth="290.0" />
       <Label layoutX="127.0" layoutY="194.0" prefHeight="21.0" prefWidth="81.0" text="Address" />
       <Label fx:id="region" layoutX="231.0" layoutY="227.0" prefHeight="21.0" prefWidth="290.0" />
       <Label layoutX="127.0" layoutY="227.0" prefHeight="21.0" prefWidth="81.0" text="Area" />
-
+      <ProgressBar fx:id="progressBar" layoutX="131.0" layoutY="272.0" prefHeight="23.0" prefWidth="411.0" progress="0.0" />
+      <Button fx:id="cancelProcess" layoutX="256.0" layoutY="343.0" mnemonicParsing="false" onAction="#stop_action" prefHeight="31.0" prefWidth="81.0" text="Stop" />
+      <Label layoutX="127.0" layoutY="43.0" text="Geocoding tool">
+         <font>
+            <Font name="Tahoma" size="38.0" />
+         </font>
+      </Label>
+      <Button fx:id="fileOpen" layoutX="127.0" layoutY="411.0" mnemonicParsing="false" onAction="#fileOpen" prefHeight="31.0" prefWidth="81.0" text="File" />
+      <Label fx:id="fileLabel" layoutX="131.0" layoutY="476.0" prefHeight="31.0" prefWidth="463.0" />
+      <Label layoutX="393.0" layoutY="67.0" text="v 1.0" />
+      <Label layoutX="14.0" layoutY="565.0" text="Created by D.Yuganov" />
+      <Label layoutX="644.0" layoutY="565.0" text="Powered by Яndex" />
 
    </children>
 </AnchorPane>

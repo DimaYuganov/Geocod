@@ -1,10 +1,16 @@
 package MainGeocod;
 
 
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -13,17 +19,20 @@ import java.io.IOException;
 public class MainController  {
 
     GeocodingProcess geocodingProcess;
-    String area, lat, lng;
+    public String area, lat, lng, name, locationAddress, city;
     In in;
     Out out;
+    public Task task;
+    public int totalNumbers;
 
     @FXML
-    Label customer, region, address;
-
+    Label customer, region, address, fileLabel;
+    @FXML
+    ProgressBar progressBar;
 
     public MainController() throws IOException {
-        in=new In("C:\\Users\\1234\\Downloads\\in.xls");
-        out = new Out("C:\\Users\\1234\\Downloads\\out.xls");
+        // in=new In("C:\\Users\\1234\\Downloads\\in.xls");
+        // out = new Out("C:\\Users\\1234\\Downloads\\out.xls");
     }
 
 
@@ -32,96 +41,110 @@ public class MainController  {
 
 
 
-        Thread myThready = new Thread(new Runnable()
-        {
-            public void run() //Этот метод будет выполняться в побочном потоке
+       task = new Task<Void>() {
+            @Override public Void call() throws Exception {
+            totalNumbers = in.getNumberOfLines();
+                out.fileCreation();
 
-            {
+                for (int j=0; j<=totalNumbers; j++) {
+                   if (isCancelled()) {
+                      break;
+                  }
+                    String[] inputString = new String[4];
 
+                            inputString = in.getInputLine(j);
 
-                System.out.println("Привет из побочного потока!");
+                            System.out.println("This is a number a lines: " + in.getNumberOfLines());
+            name=inputString[0];
+                    locationAddress=inputString[1];
+                        System.out.println("First line: " + inputString[0]);
 
-                try {
-                customer.setText("Hellow from other thread");
+try {
+    geocodingProcess = new GeocodingProcess(inputString[1]);
 
-
-                    System.out.println("This is a number a lines: " + in.getNumberOfLines());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        myThready.start();
-
-
-
-
-        Thread myThready1 = new Thread(new Runnable()
-        {
-            public void run() //Этот метод будет выполняться в побочном потоке
-
-            {
-                System.out.println("Привет из побочного потока!");
-
-
-
-
-
-        for(int j=1; j<7; j++) {
-            String[] str = new String[0];
-            try {
-                str = in.getInputLine(j);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            try {
-                System.out.println("This is a number a lines: " + in.getNumberOfLines());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            System.out.println("First line: " + str[0]);
-
-            try {
-                geocodingProcess = new GeocodingProcess(str[1]);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            area = geocodingProcess.getArea();
+    area = geocodingProcess.getArea();
     lat = geocodingProcess.getLat();
     lng = geocodingProcess.getLng();
+    city = geocodingProcess.getCity();
 
-    try {
-        out.fileCreation();
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
-            try {
-                out.setOutPutData(j, str, area, lat, lng);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
 
-            System.out.println();
-    System.out.println("This is responce from Controller: " + area);
-    System.out.println("This is responce from Lat: " + lat);
-    System.out.println("This is responce from Lng: " + lng);
+} catch (Exception e){
+    System.out.println("geocoding problem");
 
-  //  customer.setText(str[0]);
- //   address.setText(str[1]);
- //   region.setText(area);
+
+
 }
 
+
+                            out.setOutPutData(j,totalNumbers, inputString, area, lat, lng, city);
+
+                        System.out.println();
+                        System.out.println("This is responce from Controller: " + area);
+                        System.out.println("This is responce from Lat: " + lat);
+                        System.out.println("This is responce from Lng: " + lng);
+                        System.out.println("This is responce from City: " + city);
+
+
+                    updateProgress(j, totalNumbers);
+
+
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            region.setText(area);
+                            customer.setText(name);
+                            address.setText(locationAddress);
+                        }
+                    });
+
+
+
+
+                }
+                return null;
             }
-        });
-        myThready1.start();
+
+
+        };
+      //  progressBar = new ProgressBar();
+        progressBar.progressProperty().bind(task.progressProperty());
+
+
+
+        new Thread(task).start();
+
+
 
     }
 
 
     public void stop_action(ActionEvent actionEvent) {
-
+        task.cancel();
     }
 
+    public void fileOpen(ActionEvent actionEvent) {
+
+        FileChooser fileChooser = new FileChooser();
+
+        Stage stage = new Stage();
+
+        File file = fileChooser.showOpenDialog(stage);
+
+        String st1 = file.getPath();
+        String st2 = file.getName();
+        int st3 = st1.indexOf(st2);
+
+
+        System.out.println(file.getName());
+        System.out.println(file.getPath());
+        System.out.println(file.getParent());
+        System.out.println(st3);
+
+        fileLabel.setText(file.getPath());
+
+
+         in=new In(file.getPath());
+         out = new Out(file.getParent()+"\\out.xls");
+
+    }
 }

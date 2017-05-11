@@ -18,6 +18,7 @@ public class GeocodingProcess{
     public String lat;
     public String lng;
     public String region;
+    public String city;
 
 
     public GeocodingProcess(String location) throws IOException {
@@ -33,66 +34,119 @@ public class GeocodingProcess{
 
 
 
-    public String getArea(){
+    public String getArea()throws Exception{
 
-       JSONObject geoObjectCollection = response.getJSONObject("response")
-                .getJSONObject("GeoObjectCollection");
-
-
-        JSONObject featureMember = geoObjectCollection.getJSONArray("featureMember").getJSONObject(0);
-
-        JSONObject geoObject = featureMember.getJSONObject("GeoObject");
-
-        JSONObject metaDataProperty = geoObject.getJSONObject("metaDataProperty")
-
-                .getJSONObject("GeocoderMetaData")
-                .getJSONObject("Address");
-
-        JSONObject components = metaDataProperty.getJSONArray("Components").getJSONObject(2);
+        try {
 
 
-        region = components.getString("name");
+            JSONObject geoObjectCollection = response.getJSONObject("response")
+                    .getJSONObject("GeoObjectCollection");
 
+
+            JSONObject featureMember = geoObjectCollection.getJSONArray("featureMember").getJSONObject(0);
+
+            JSONObject geoObject = featureMember.getJSONObject("GeoObject");
+
+            JSONObject metaDataProperty = geoObject.getJSONObject("metaDataProperty")
+
+                    .getJSONObject("GeocoderMetaData")
+                    .getJSONObject("Address");
+
+            JSONObject components = metaDataProperty.getJSONArray("Components").getJSONObject(2);
+
+
+            region = components.getString("name");
+        }catch (Exception e){
+
+            region ="unknown";
+        }
 
         return region;
     }
 
 
-    public String getLat() {
+    public String getLat() throws Exception{
 
-        JSONObject geoObjectCollection = response.getJSONObject("response")
-                .getJSONObject("GeoObjectCollection");
-
-
-        JSONObject featureMember = geoObjectCollection.getJSONArray("featureMember").getJSONObject(0);
+        try {
+            JSONObject geoObjectCollection = response.getJSONObject("response")
+                    .getJSONObject("GeoObjectCollection");
 
 
-        JSONObject geoObject = featureMember.getJSONObject("GeoObject");
+            JSONObject featureMember = geoObjectCollection.getJSONArray("featureMember").getJSONObject(0);
 
-        JSONObject point = geoObject.getJSONObject("Point");
-        String loc_coordinates = point.getString("pos");
 
-        String[] coordinates = loc_coordinates.split(" ");
+            JSONObject geoObject = featureMember.getJSONObject("GeoObject");
 
-        return lat=coordinates[1];
+            JSONObject point = geoObject.getJSONObject("Point");
+            String loc_coordinates = point.getString("pos");
+
+            String[] coordinates = loc_coordinates.split(" ");
+            lat = coordinates[1];
+
+
+        } catch (Exception e) {
+
+            lat = "none";
+        }
+
+
+        return lat;
     }
 
-    public String getLng() {
+    public String getLng() throws Exception{
 
-        JSONObject geoObjectCollection = response.getJSONObject("response")
-                .getJSONObject("GeoObjectCollection");
-
-
-        JSONObject featureMember = geoObjectCollection.getJSONArray("featureMember").getJSONObject(0);
+        try {
+            JSONObject geoObjectCollection = response.getJSONObject("response")
+                    .getJSONObject("GeoObjectCollection");
 
 
-        JSONObject geoObject = featureMember.getJSONObject("GeoObject");
+            JSONObject featureMember = geoObjectCollection.getJSONArray("featureMember").getJSONObject(0);
 
-        JSONObject point = geoObject.getJSONObject("Point");
-        String loc_coordinates = point.getString("pos");
 
-        String[] coordinates = loc_coordinates.split(" ");
+            JSONObject geoObject = featureMember.getJSONObject("GeoObject");
 
-        return lng=coordinates[0];
+            JSONObject point = geoObject.getJSONObject("Point");
+            String loc_coordinates = point.getString("pos");
+
+            String[] coordinates = loc_coordinates.split(" ");
+            lng=coordinates[0];
+        }
+        catch (Exception e) {
+
+            lng="none";
+        }
+        return lng;
+    }
+
+    public String getCity() {
+
+        try {
+
+
+            JSONObject geoObjectCollection = response.getJSONObject("response")
+                    .getJSONObject("GeoObjectCollection");
+
+
+            JSONObject featureMember = geoObjectCollection.getJSONArray("featureMember").getJSONObject(0);
+
+            JSONObject geoObject = featureMember.getJSONObject("GeoObject");
+
+            JSONObject metaDataProperty = geoObject.getJSONObject("metaDataProperty")
+
+                    .getJSONObject("GeocoderMetaData")
+                    .getJSONObject("Address");
+
+            JSONObject components = metaDataProperty.getJSONArray("Components").getJSONObject(4);
+
+
+            city = components.getString("name");
+        }catch (Exception e){
+
+            city ="unknown";
+        }
+
+
+
+        return city;
     }
 }
